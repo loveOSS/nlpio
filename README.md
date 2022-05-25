@@ -14,12 +14,16 @@ print(strip_html_tags('<h1>Hello World</h1>')) # "Hello World"
 
 ## Deploy upgrade on PyPi
 
+### Build
+
 ```
-# Build
 python setup.py sdist bdist_wheel
 twine upload dist/*
+```
 
-# Test
+### Test
+
+```
 python -m pip install -e .
 python
 
