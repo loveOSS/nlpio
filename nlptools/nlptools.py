@@ -8,17 +8,13 @@ from nltk.tokenize.toktok import ToktokTokenizer
 from nlptools.contractions import CONTRACTION_MAP
 
 
-def __load_spacy():
-    return spacy.load("en_core_web_sm")
-
-
-def strip_html_tags(text):
+def strip_html_tags(text: str) -> str:
     soup = BeautifulSoup(text, "html.parser")
     stripped_text = soup.get_text()
     return stripped_text
 
 
-def remove_accented_chars(text):
+def replace_accented_chars(text: str) -> str:
     return (
         unicodedata.normalize("NFKD", text)
         .encode("ascii", "ignore")
@@ -26,15 +22,13 @@ def remove_accented_chars(text):
     )
 
 
-def remove_special_characters(text, remove_digits=False):
-    special_char_pattern = re.compile(r"([{.(-)!}])")
-    text = special_char_pattern.sub(" \\1 ", text)
-    pattern = r"[^a-zA-z0-9\s]" if not remove_digits else r"[^a-zA-z\s]"
-    text = re.sub(pattern, "", text)
-    return text
+def remove_special_characters(text: str, remove_digits: bool = False) -> str:
+    pattern = r"[^a-zA-Z0-9 ]" if not remove_digits else r"[^a-zA-Z ]"
+
+    return re.sub(pattern, "", text)
 
 
-def remove_stopwords(text, is_lower_case=False):
+def remove_stopwords(text: str, is_lower_case: bool = False) -> str:
     tokenizer = ToktokTokenizer()
     stopwords = nltk.corpus.stopwords.words("english")
     stopwords.remove("no")
@@ -49,7 +43,7 @@ def remove_stopwords(text, is_lower_case=False):
     return " ".join(tokens)
 
 
-def expand_contractions(text, contraction_mapping=CONTRACTION_MAP):
+def expand_contractions(text: str, contraction_mapping: dict = CONTRACTION_MAP) -> str:
 
     contractions_pattern = re.compile(
         "({})".format("|".join(contraction_mapping.keys())),
@@ -72,67 +66,39 @@ def expand_contractions(text, contraction_mapping=CONTRACTION_MAP):
     return expanded_text
 
 
-def simple_stemmer(text):
-    ps = nltk.porter.PorterStemmer()
+def lemmatize_text(text: str, vocabulary: str = "en_core_web_sm") -> str:
+    spacy_loader = spacy.load(vocabulary)
+    text = spacy_loader(text)
 
-    return " ".join([ps.stem(word) for word in text.split()])
-
-
-def lemmatize_text(text):
-
-    text = __load_spacy(text)
     return " ".join(
-        [word.lemma_ if word.lemma_ != "-PRON-" else word.text for word in text]  # noqa: E501
+        [
+            word.lemma_ if word.lemma_ != "-PRON-" else word.text for word in text
+        ]  # noqa: E501
     )
 
 
-def remove_extra_lines(text):
+def remove_extra_lines(text: str) -> str:
     return re.sub(r"[\r|\n|\r\n]+", " ", text)
 
 
-def remove_extra_whitespaces(text):
+def remove_extra_whitespaces(text: str) -> str:
     return re.sub(" +", " ", text)
 
 
-def normalize_corpus(
-    corpus,
-    html_stripping=True,
-    contraction_expansion=True,
-    accented_char_removal=True,
-    text_lower_case=True,
-    text_lemmatization=True,
-    special_char_removal=True,
-    stopword_removal=True,
-    remove_digits=True,
-):
+def clean_corpus(corpus: list[str], vocabulary: str = "en_core_web_sm") -> list:
 
     normalized_corpus = []
 
     for doc in corpus:
-        if html_stripping:
-            doc = strip_html_tags(doc)
-
-        if accented_char_removal:
-            doc = remove_accented_chars(doc)
-
-        if contraction_expansion:
-            doc = expand_contractions(doc)
-
-        if text_lower_case:
-            doc = doc.lower()
-
+        doc = doc.lower()
+        doc = strip_html_tags(doc)
+        doc = expand_contractions(doc)
+        doc = replace_accented_chars(doc)
+        doc = remove_special_characters(doc)
         doc = remove_extra_lines(doc)
-
-        if text_lemmatization:
-            doc = lemmatize_text(doc)
-
-        if special_char_removal:
-            doc = remove_special_characters(doc, remove_digits=remove_digits)
-
+        doc = lemmatize_text(doc, vocabulary)
+        doc = remove_stopwords(doc)
         doc = remove_extra_whitespaces(doc)
-
-        if stopword_removal:
-            doc = remove_stopwords(doc, is_lower_case=text_lower_case)
 
         normalized_corpus.append(doc)
 
