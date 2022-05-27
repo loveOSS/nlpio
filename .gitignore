@@ -1,4 +1,7 @@
 *.pyc
 .coverage
 .pytest_cache/
+build/
+dist/
+nlpio.egg-info/
 env/

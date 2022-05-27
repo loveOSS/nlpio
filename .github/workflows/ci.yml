@@ -1,4 +1,4 @@
-name: NLP Tools CI
+name: NLPio CI
 
 on:
   push:

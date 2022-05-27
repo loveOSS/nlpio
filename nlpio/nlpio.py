@@ -5,7 +5,7 @@ import spacy
 
 from bs4 import BeautifulSoup
 from nltk.tokenize.toktok import ToktokTokenizer
-from nlptools.contractions import CONTRACTION_MAP
+from nlpio.contractions import CONTRACTION_MAP
 
 
 def strip_html_tags(text: str) -> str:
@@ -56,7 +56,9 @@ def expand_contractions(text: str, mapping: dict = CONTRACTION_MAP) -> str:
         match = contraction.group(0)
         first_char = match[0]
         expanded_contraction = (
-            mapping.get(match) if mapping.get(match) else mapping.get(match.lower())
+            mapping.get(match)
+            if mapping.get(match)
+            else mapping.get(match.lower())
         )
         expanded_contraction = first_char + expanded_contraction[1:]
         return expanded_contraction
@@ -71,7 +73,9 @@ def lemmatize_text(text: str, vocabulary: str = "en_core_web_sm") -> str:
     text = spacy_loader(text)
 
     return " ".join(
-        [word.lemma_ if word.lemma_ != "-PRON-" else word.text for word in text]
+        [
+            word.lemma_ if word.lemma_ != "-PRON-" else word.text for word in text
+        ]
     )
 
 

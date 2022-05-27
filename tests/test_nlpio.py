@@ -1,4 +1,4 @@
-from nlptools.nlptools import (
+from nlpio.nlpio import (
     strip_html_tags,
     replace_accented_chars,
     remove_special_characters,

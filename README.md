@@ -3,11 +3,11 @@
 ## How to use it ?
 
 ``
-pip install nlptools
+pip install nlpio
 ``
 
 ```python
-from nlptools import strip_html_tags
+from nlpio import strip_html_tags
 
 print(strip_html_tags('<h1>Hello World</h1>')) # "Hello World"
 ```
@@ -27,7 +27,7 @@ twine upload dist/*
 python -m pip install -e .
 python
 
->>> from nlptools import strip_html_tags
+>>> from nlpio import strip_html_tags
 >>> print(strip_html_tags('<h1>Hello World</h1>'))
 ```
 

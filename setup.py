@@ -4,11 +4,11 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="nlptools",
+    name="nlpio",
     version="0.1",
     author="Mickaël Andrieu",
     author_email="mickael.andrieu@solvolabs.com",
-    url="https://github.com/loveOSS/nlp_tools",
+    url="https://github.com/loveOSS/nlpio",
     description="Library to clean text data for NLP",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -20,7 +20,6 @@ setuptools.setup(
     ],
     python_requires=">=3.9",
     py_modules=["nlptools"],
-    package_dir={"": "nlptools"},
     install_requires=[
         "beautifulsoup4>=4.11",
         "scikit-learn>=1.1",
