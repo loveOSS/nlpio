@@ -28,11 +28,13 @@ def remove_special_characters(text: str, remove_digits: bool = False) -> str:
     return re.sub(pattern, "", text)
 
 
-def remove_stopwords(text: str, is_lower_case: bool = False) -> str:
+def remove_stopwords(
+    text: str, is_lower_case: bool = False, words: list[str] = []
+) -> str:
+
     tokenizer = ToktokTokenizer()
     stopwords = nltk.corpus.stopwords.words("english")
-    stopwords.remove("no")
-    stopwords.remove("not")
+    [stopwords.remove(word) for word in words]
 
     tokens = tokenizer.tokenize(text)
     tokens = [token.strip() for token in tokens]
@@ -43,10 +45,10 @@ def remove_stopwords(text: str, is_lower_case: bool = False) -> str:
     return " ".join(tokens)
 
 
-def expand_contractions(text: str, contraction_mapping: dict = CONTRACTION_MAP) -> str:
+def expand_contractions(text: str, mapping: dict = CONTRACTION_MAP) -> str:
 
     contractions_pattern = re.compile(
-        "({})".format("|".join(contraction_mapping.keys())),
+        "({})".format("|".join(mapping.keys())),
         flags=re.IGNORECASE | re.DOTALL,
     )
 
@@ -54,9 +56,7 @@ def expand_contractions(text: str, contraction_mapping: dict = CONTRACTION_MAP) 
         match = contraction.group(0)
         first_char = match[0]
         expanded_contraction = (
-            contraction_mapping.get(match)
-            if contraction_mapping.get(match)
-            else contraction_mapping.get(match.lower())
+            mapping.get(match) if mapping.get(match) else mapping.get(match.lower())
         )
         expanded_contraction = first_char + expanded_contraction[1:]
         return expanded_contraction
@@ -71,9 +71,7 @@ def lemmatize_text(text: str, vocabulary: str = "en_core_web_sm") -> str:
     text = spacy_loader(text)
 
     return " ".join(
-        [
-            word.lemma_ if word.lemma_ != "-PRON-" else word.text for word in text
-        ]  # noqa: E501
+        [word.lemma_ if word.lemma_ != "-PRON-" else word.text for word in text]
     )
 
 
@@ -85,7 +83,9 @@ def remove_extra_whitespaces(text: str) -> str:
     return re.sub(" +", " ", text)
 
 
-def clean_corpus(corpus: list[str], vocabulary: str = "en_core_web_sm") -> list:
+def clean_corpus(
+    corpus: list[str], vocabulary: str = "en_core_web_sm", stopwords: list[str] = []
+) -> list:
 
     normalized_corpus = []
 
@@ -97,7 +97,7 @@ def clean_corpus(corpus: list[str], vocabulary: str = "en_core_web_sm") -> list:
         doc = remove_special_characters(doc)
         doc = remove_extra_lines(doc)
         doc = lemmatize_text(doc, vocabulary)
-        doc = remove_stopwords(doc)
+        doc = remove_stopwords(doc, stopwords)
         doc = remove_extra_whitespaces(doc)
 
         normalized_corpus.append(doc)
