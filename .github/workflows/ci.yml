@@ -23,4 +23,4 @@ jobs:
         python -m nltk.downloader stopwords
     - name: Test with pytest
       run: |
-        pytest --flake8 nlptools/
+        pytest --flake8

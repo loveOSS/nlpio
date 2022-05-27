@@ -6,6 +6,7 @@ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.3.0
 
 black==22.3.0
 pytest==6.2.4
+pytest-sugar==0.9.4
 flake8==3.9.2
 pytest-flake8==1.0.7
 autopep8==1.5.7
