@@ -1,4 +1,4 @@
-# NLP Tools : the simple Python library to clean text data
+# NLP.io : the simple Python library to clean text data
 
 ## How to use it ?
 
